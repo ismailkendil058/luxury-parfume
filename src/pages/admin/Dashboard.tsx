@@ -84,15 +84,15 @@ const AdminDashboard = () => {
   return (
     <div className="p-4 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Analytics</h2>
+        <h2 className="text-lg font-semibold">لوحة الإحصائيات</h2>
         <Select value={period} onValueChange={setPeriod}>
           <SelectTrigger className="w-32 h-9 rounded-xl">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="today">Today</SelectItem>
-            <SelectItem value="month">This Month</SelectItem>
-            <SelectItem value="year">This Year</SelectItem>
+            <SelectItem value="today">اليوم</SelectItem>
+            <SelectItem value="month">هذا الشهر</SelectItem>
+            <SelectItem value="year">هذا العام</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -100,40 +100,42 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-2 gap-3">
         <Card className="rounded-2xl luxury-shadow border-border/50">
           <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Revenue</p>
-            <p className="text-xl font-bold mt-1 tabular-nums">{stats.revenue.toLocaleString()} Dz</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">الإيرادات</p>
+            <p className="text-xl font-bold mt-1 tabular-nums">{stats.revenue.toLocaleString()} دج</p>
           </CardContent>
         </Card>
         <Card className="rounded-2xl luxury-shadow border-border/50">
           <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Profit</p>
-            <p className="text-xl font-bold mt-1 tabular-nums">{stats.profit.toLocaleString()} Dz</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">الأرباح</p>
+            <p className="text-xl font-bold mt-1 tabular-nums">{stats.profit.toLocaleString()} دج</p>
           </CardContent>
         </Card>
       </div>
 
-      {stats.workerStats.length > 0 && (
-        <Card className="rounded-2xl luxury-shadow border-border/50">
-          <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">By Worker</p>
-            <div className="space-y-2">
-              {stats.workerStats.map((w, i) => (
-                <div key={i} className="flex justify-between text-sm">
-                  <span className="font-medium">{w.name}</span>
-                  <div className="text-right tabular-nums">
-                    <span>{w.revenue.toLocaleString()} Dz</span>
-                    <span className="text-muted-foreground ml-2">({w.profit.toLocaleString()} profit)</span>
+      {
+        stats.workerStats.length > 0 && (
+          <Card className="rounded-2xl luxury-shadow border-border/50">
+            <CardContent className="p-4">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">حسب العامل</p>
+              <div className="space-y-2">
+                {stats.workerStats.map((w, i) => (
+                  <div key={i} className="flex justify-between text-sm">
+                    <span className="font-medium">{w.name}</span>
+                    <div className="text-right tabular-nums">
+                      <span>{w.revenue.toLocaleString()} دج</span>
+                      <span className="text-muted-foreground ml-2">({w.profit.toLocaleString()} أرباح)</span>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )
+      }
 
       <Card className="rounded-2xl luxury-shadow border-border/50">
         <CardContent className="p-4">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">Annual Overview</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">نظرة عامة سنوية</p>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
@@ -142,14 +144,14 @@ const AdminDashboard = () => {
                 <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="revenue" fill="hsl(0, 0%, 15%)" radius={[4, 4, 0, 0]} name="Revenue" />
-                <Bar dataKey="profit" fill="hsl(0, 0%, 60%)" radius={[4, 4, 0, 0]} name="Profit" />
+                <Bar dataKey="revenue" fill="hsl(0, 0%, 15%)" radius={[4, 4, 0, 0]} name="الإيرادات" />
+                <Bar dataKey="profit" fill="hsl(0, 0%, 60%)" radius={[4, 4, 0, 0]} name="الأرباح" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
-    </div>
+    </div >
   );
 };
 

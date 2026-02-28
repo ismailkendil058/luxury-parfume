@@ -18,20 +18,20 @@ const SectionControl = ({ workerName, sectionRevenue, isOpen, onOpen, onClose }:
     >
       <div className="flex items-center justify-between mb-3">
         <div>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Worker</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider">العامل</p>
           <p className="font-semibold text-foreground">{workerName}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Section Total</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider">إجمالي الجلسة</p>
           <p className="text-xl font-bold text-foreground tabular-nums">
-            {sectionRevenue.toLocaleString()} Dz
+            {sectionRevenue.toLocaleString()} دج
           </p>
         </div>
       </div>
       <div className="flex gap-2">
         {!isOpen ? (
           <Button onClick={onOpen} className="flex-1 h-10 rounded-xl text-sm font-medium">
-            Open Section
+            فتح الجلسة
           </Button>
         ) : (
           <Button
@@ -39,7 +39,7 @@ const SectionControl = ({ workerName, sectionRevenue, isOpen, onOpen, onClose }:
             variant="outline"
             className="flex-1 h-10 rounded-xl text-sm font-medium"
           >
-            Close Section
+            إغلاق الجلسة
           </Button>
         )}
       </div>

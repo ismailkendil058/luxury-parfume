@@ -17,7 +17,7 @@ const AdminLogin = () => {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      toast.error("Invalid credentials");
+      toast.error("بيانات الاعتماد غير صالحة");
     } else {
       navigate("/admin");
     }
@@ -32,21 +32,21 @@ const AdminLogin = () => {
         className="w-full max-w-sm"
       >
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight">Admin Panel</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">لوحة تحكم المسؤول</h1>
           <p className="text-sm text-muted-foreground mt-1">Luxury Parfume</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <Input
             type="email"
-            placeholder="Email"
+            placeholder="البريد الإلكتروني"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="h-12 rounded-xl"
           />
           <Input
             type="password"
-            placeholder="Password"
+            placeholder="كلمة المرور"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="h-12 rounded-xl"
@@ -56,7 +56,7 @@ const AdminLogin = () => {
             disabled={loading}
             className="w-full h-12 rounded-xl text-base font-medium"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "جارٍ تسجيل الدخول..." : "تسجيل الدخول"}
           </Button>
         </form>
 
@@ -65,7 +65,7 @@ const AdminLogin = () => {
             onClick={() => navigate("/")}
             className="text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
-            ← Worker POS
+            ← نقطة بيع العامل
           </button>
         </div>
       </motion.div>

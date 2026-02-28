@@ -75,7 +75,7 @@ const AdminProducts = () => {
   };
 
   const handleSave = async () => {
-    if (!name.trim()) { toast.error("Name required"); return; }
+    if (!name.trim()) { toast.error("الاسم مطلوب"); return; }
 
     const productData = {
       name,
@@ -91,12 +91,12 @@ const AdminProducts = () => {
 
     if (editing) {
       const { error } = await supabase.from("products").update(productData).eq("id", editing.id);
-      if (error) { toast.error("Update failed"); return; }
+      if (error) { toast.error("فشل التحديث"); return; }
       productId = editing.id;
       await supabase.from("product_sizes").delete().eq("product_id", productId);
     } else {
       const { data, error } = await supabase.from("products").insert(productData).select().single();
-      if (error || !data) { toast.error("Creation failed"); return; }
+      if (error || !data) { toast.error("فشل الإنشاء"); return; }
       productId = data.id;
     }
 
@@ -118,14 +118,14 @@ const AdminProducts = () => {
     setShowDialog(false);
     resetForm();
     fetchProducts();
-    toast.success(editing ? "Product updated" : "Product added");
+    toast.success(editing ? "تم تحديث المنتج" : "تمت إضافة المنتج");
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete product?")) return;
+    if (!confirm("هل تريد حذف المنتج؟")) return;
     await supabase.from("products").delete().eq("id", id);
     fetchProducts();
-    toast.success("Deleted");
+    toast.success("تم الحذف");
   };
 
   const addSize = () => setSizes([...sizes, { size_ml: "", selling_price: "", purchase_price: "", stock: "" }]);
@@ -144,9 +144,9 @@ const AdminProducts = () => {
   return (
     <div className="p-4 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Products</h2>
+        <h2 className="text-lg font-semibold">المنتجات</h2>
         <Button onClick={() => { resetForm(); setShowDialog(true); }} size="sm" className="rounded-xl gap-1">
-          <Plus className="w-4 h-4" /> Add
+          <Plus className="w-4 h-4" /> إضافة
         </Button>
       </div>
 
@@ -158,13 +158,13 @@ const AdminProducts = () => {
                 <div className="flex-1 min-w-0">
                   <p className="font-medium">{p.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {p.categories?.name || "No category"} · {p.quantity_type === "ml" ? "ML sizes" : `${p.stock} in stock`}
+                    {p.categories?.name || "بدون فئة"} · {p.quantity_type === "ml" ? "أحجام مل" : `${p.stock} في المخزون`}
                   </p>
                   <div className="flex gap-3 mt-1 text-sm tabular-nums">
-                    <span>Buy: {Number(p.purchase_price).toLocaleString()} Dz</span>
-                    <span>Sell: {Number(p.selling_price).toLocaleString()} Dz</span>
+                    <span>شراء: {Number(p.purchase_price).toLocaleString()} دج</span>
+                    <span>بيع: {Number(p.selling_price).toLocaleString()} دج</span>
                     <span className="text-muted-foreground">
-                      Profit: {(Number(p.selling_price) - Number(p.purchase_price)).toLocaleString()} Dz
+                      أرباح: {(Number(p.selling_price) - Number(p.purchase_price)).toLocaleString()} دج
                     </span>
                   </div>
                 </div>
@@ -180,26 +180,26 @@ const AdminProducts = () => {
             </CardContent>
           </Card>
         ))}
-        {products.length === 0 && <p className="text-center text-muted-foreground text-sm mt-8">No products yet</p>}
+        {products.length === 0 && <p className="text-center text-muted-foreground text-sm mt-8">لا يوجد منتجات بعد</p>}
       </div>
 
       <Dialog open={showDialog} onOpenChange={(open) => { setShowDialog(open); if (!open) resetForm(); }}>
         <DialogContent className="max-w-md rounded-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit Product" : "Add Product"}</DialogTitle>
+            <DialogTitle>{editing ? "تعديل المنتج" : "إضافة منتج"}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-3">
-            <Input placeholder="Product name" value={name} onChange={(e) => setName(e.target.value)} className="h-11 rounded-xl" />
+            <Input placeholder="اسم المنتج" value={name} onChange={(e) => setName(e.target.value)} className="h-11 rounded-xl" />
 
             <div className="grid grid-cols-2 gap-2">
-              <Input placeholder="Purchase price (Dz)" type="number" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} className="h-11 rounded-xl" />
-              <Input placeholder="Selling price (Dz)" type="number" value={sellingPrice} onChange={(e) => setSellingPrice(e.target.value)} className="h-11 rounded-xl" />
+              <Input placeholder="سعر الشراء (دج)" type="number" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} className="h-11 rounded-xl" />
+              <Input placeholder="سعر البيع (دج)" type="number" value={sellingPrice} onChange={(e) => setSellingPrice(e.target.value)} className="h-11 rounded-xl" />
             </div>
 
             <div className="flex gap-2">
               <Input
-                placeholder="Barcode (optional)"
+                placeholder="الرمز الشريطي (اختياري)"
                 value={barcode}
                 onChange={(e) => setBarcode(e.target.value)}
                 className="h-11 rounded-xl flex-1"
@@ -216,7 +216,7 @@ const AdminProducts = () => {
             </div>
 
             <Select value={categoryId} onValueChange={setCategoryId}>
-              <SelectTrigger className="h-11 rounded-xl"><SelectValue placeholder="Category" /></SelectTrigger>
+              <SelectTrigger className="h-11 rounded-xl"><SelectValue placeholder="الفئة" /></SelectTrigger>
               <SelectContent>
                 {categories.map((c) => (
                   <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
@@ -227,36 +227,36 @@ const AdminProducts = () => {
             <Select value={quantityType} onValueChange={setQuantityType}>
               <SelectTrigger className="h-11 rounded-xl"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="unit">Unit-based</SelectItem>
-                <SelectItem value="ml">ML-based (sizes)</SelectItem>
+                <SelectItem value="unit">بالوحدة</SelectItem>
+                <SelectItem value="ml">بالملليلتر (أحجام)</SelectItem>
               </SelectContent>
             </Select>
 
             {quantityType === "unit" && (
-              <Input placeholder="Stock quantity" type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="h-11 rounded-xl" />
+              <Input placeholder="كمية المخزون" type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="h-11 rounded-xl" />
             )}
 
             {quantityType === "ml" && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium">Sizes</p>
+                  <p className="text-sm font-medium">الأحجام</p>
                   <Button type="button" variant="outline" size="sm" onClick={addSize} className="rounded-xl gap-1">
-                    <Plus className="w-3 h-3" /> Size
+                    <Plus className="w-3 h-3" /> حجم
                   </Button>
                 </div>
                 {sizes.map((s, i) => (
                   <div key={i} className="grid grid-cols-5 gap-1 items-center">
                     <Input placeholder="ml" value={s.size_ml} onChange={(e) => updateSize(i, "size_ml", e.target.value)} className="h-9 rounded-lg text-xs" />
-                    <Input placeholder="Buy" value={s.purchase_price} onChange={(e) => updateSize(i, "purchase_price", e.target.value)} className="h-9 rounded-lg text-xs" />
-                    <Input placeholder="Sell" value={s.selling_price} onChange={(e) => updateSize(i, "selling_price", e.target.value)} className="h-9 rounded-lg text-xs" />
-                    <Input placeholder="Stock" value={s.stock} onChange={(e) => updateSize(i, "stock", e.target.value)} className="h-9 rounded-lg text-xs" />
+                    <Input placeholder="شراء" value={s.purchase_price} onChange={(e) => updateSize(i, "purchase_price", e.target.value)} className="h-9 rounded-lg text-xs" />
+                    <Input placeholder="بيع" value={s.selling_price} onChange={(e) => updateSize(i, "selling_price", e.target.value)} className="h-9 rounded-lg text-xs" />
+                    <Input placeholder="المخزون" value={s.stock} onChange={(e) => updateSize(i, "stock", e.target.value)} className="h-9 rounded-lg text-xs" />
                     <button onClick={() => removeSize(i)} className="p-1 text-destructive" title="Remove size"><X className="w-4 h-4" /></button>
                   </div>
                 ))}
               </div>
             )}
 
-            <Button onClick={handleSave} className="w-full h-11 rounded-xl">{editing ? "Update" : "Add Product"}</Button>
+            <Button onClick={handleSave} className="w-full h-11 rounded-xl">{editing ? "تحديث" : "إضافة منتج"}</Button>
           </div>
         </DialogContent>
       </Dialog>

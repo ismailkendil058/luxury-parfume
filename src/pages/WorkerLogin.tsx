@@ -32,14 +32,14 @@ const WorkerLogin = () => {
         body: { pin: workerPin },
       });
       if (fnError || data?.error) {
-        setError("Invalid PIN");
+        setError("رمز PIN غير صالح");
         setPin("");
       } else {
         sessionStorage.setItem("worker", JSON.stringify(data.worker));
         navigate("/pos");
       }
     } catch {
-      setError("Connection error");
+      setError("خطأ في الاتصال");
       setPin("");
     } finally {
       setLoading(false);
@@ -59,7 +59,7 @@ const WorkerLogin = () => {
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Luxury Parfume
           </h1>
-          <p className="text-sm text-muted-foreground mt-2">Enter your PIN to continue</p>
+          <p className="text-sm text-muted-foreground mt-2">أدخل رمز PIN الخاص بك للمتابعة</p>
         </div>
 
         <div className="flex justify-center gap-3 mb-8">
@@ -67,11 +67,10 @@ const WorkerLogin = () => {
             <motion.div
               key={i}
               animate={{ scale: pin.length > i ? 1 : 0.8 }}
-              className={`w-4 h-4 rounded-full border-2 transition-colors duration-200 ${
-                pin.length > i
+              className={`w-4 h-4 rounded-full border-2 transition-colors duration-200 ${pin.length > i
                   ? "bg-foreground border-foreground"
                   : "border-muted-foreground/30"
-              }`}
+                }`}
             />
           ))}
         </div>
@@ -122,7 +121,7 @@ const WorkerLogin = () => {
             onClick={() => navigate("/admin/login")}
             className="text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
-            Admin Access
+            دخول المسؤول
           </button>
         </div>
       </motion.div>

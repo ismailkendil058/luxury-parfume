@@ -36,29 +36,29 @@ const AdminWorkers = () => {
 
   const handleSave = async () => {
     if (!name || pin.length !== 4) {
-      toast.error("Name and 4-digit PIN required");
+      toast.error("الاسم ورمز PIN المكون من 4 أرقام مطلوبان");
       return;
     }
     if (editing) {
       const { error } = await supabase.from("workers").update({ name, pin }).eq("id", editing.id);
-      if (error) { toast.error("Update failed"); return; }
+      if (error) { toast.error("فشل التحديث"); return; }
     } else {
       const { error } = await supabase.from("workers").insert({ name, pin });
-      if (error) { toast.error("Creation failed"); return; }
+      if (error) { toast.error("فشل الإنشاء"); return; }
     }
     setShowDialog(false);
     setEditing(null);
     setName("");
     setPin("");
     fetchWorkers();
-    toast.success(editing ? "Worker updated" : "Worker added");
+    toast.success(editing ? "تم تحديث العامل" : "تمت إضافة العامل");
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this worker?")) return;
+    if (!confirm("هل تريد حذف هذا العامل؟")) return;
     await supabase.from("workers").delete().eq("id", id);
     fetchWorkers();
-    toast.success("Worker deleted");
+    toast.success("تم حذف العامل");
   };
 
   const openEdit = (worker: any) => {
@@ -71,13 +71,13 @@ const AdminWorkers = () => {
   return (
     <div className="p-4 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Workers</h2>
+        <h2 className="text-lg font-semibold">العمال</h2>
         <Button
           onClick={() => { setEditing(null); setName(""); setPin(""); setShowDialog(true); }}
           size="sm"
           className="rounded-xl gap-1"
         >
-          <Plus className="w-4 h-4" /> Add
+          <Plus className="w-4 h-4" /> إضافة
         </Button>
       </div>
 
@@ -90,7 +90,7 @@ const AdminWorkers = () => {
                 <div>
                   <p className="font-medium">{w.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {stat?.sessions || 0} sessions · {(stat?.revenue || 0).toLocaleString()} Dz total
+                    {stat?.sessions || 0} جلسات · {(stat?.revenue || 0).toLocaleString()} دج إجمالي
                   </p>
                 </div>
                 <div className="flex gap-1">
@@ -106,7 +106,7 @@ const AdminWorkers = () => {
           );
         })}
         {workers.length === 0 && (
-          <p className="text-center text-muted-foreground text-sm mt-8">No workers yet</p>
+          <p className="text-center text-muted-foreground text-sm mt-8">لا يوجد عمال بعد</p>
         )}
       </div>
 
@@ -120,17 +120,17 @@ const AdminWorkers = () => {
       }}>
         <DialogContent className="max-w-sm rounded-2xl">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit Worker" : "Add Worker"}</DialogTitle>
+            <DialogTitle>{editing ? "تعديل العامل" : "إضافة عامل"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <Input
-              placeholder="Worker name"
+              placeholder="اسم العامل"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="h-11 rounded-xl"
             />
             <Input
-              placeholder="4-digit PIN"
+              placeholder="رمز PIN من 4 أرقام"
               value={pin}
               onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
               maxLength={4}
@@ -138,7 +138,7 @@ const AdminWorkers = () => {
               className="h-11 rounded-xl"
             />
             <Button onClick={handleSave} className="w-full h-11 rounded-xl">
-              {editing ? "Update" : "Add Worker"}
+              {editing ? "تحديث" : "إضافة عامل"}
             </Button>
           </div>
         </DialogContent>

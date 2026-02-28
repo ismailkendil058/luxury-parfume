@@ -16,7 +16,7 @@ const ProductGrid = ({ products, onAddToCart }: ProductGridProps) => {
         ))}
       </div>
       {products.length === 0 && (
-        <p className="text-center text-muted-foreground mt-12 text-sm">No products found</p>
+        <p className="text-center text-muted-foreground mt-12 text-sm">لا توجد منتجات</p>
       )}
     </div>
   );
@@ -46,10 +46,10 @@ const ProductCard = ({
           {product.name}
         </h3>
         <p className="text-lg font-bold text-foreground mt-1 tabular-nums">
-          {Number(displayPrice).toLocaleString()} Dz
+          {Number(displayPrice).toLocaleString()} دج
         </p>
         {!inStock && (
-          <span className="text-xs text-destructive font-medium">Out of stock</span>
+          <span className="text-xs text-destructive font-medium">نفدت الكمية</span>
         )}
       </div>
 
@@ -59,11 +59,10 @@ const ProductCard = ({
             <button
               key={size.id}
               onClick={() => setSelectedSize(size.id === selectedSize?.id ? null : size)}
-              className={`px-2 py-1 rounded-lg text-xs font-medium transition-colors ${
-                selectedSize?.id === size.id
+              className={`px-2 py-1 rounded-lg text-xs font-medium transition-colors ${selectedSize?.id === size.id
                   ? "bg-foreground text-background"
                   : "bg-secondary text-foreground"
-              } ${size.stock <= 0 ? "opacity-40" : ""}`}
+                } ${size.stock <= 0 ? "opacity-40" : ""}`}
               disabled={size.stock <= 0}
             >
               {size.size_ml}ml
@@ -80,7 +79,7 @@ const ProductCard = ({
         disabled={!inStock || (hasSizes && !selectedSize)}
         className="w-full py-2 rounded-xl bg-foreground text-background text-sm font-medium disabled:opacity-30 active:scale-95 transition-transform"
       >
-        Add
+        إضافة
       </button>
     </motion.div>
   );

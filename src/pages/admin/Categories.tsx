@@ -21,7 +21,7 @@ const AdminCategories = () => {
   };
 
   const handleSave = async () => {
-    if (!name.trim()) { toast.error("Name required"); return; }
+    if (!name.trim()) { toast.error("الاسم مطلوب"); return; }
     if (editing) {
       await supabase.from("categories").update({ name }).eq("id", editing.id);
     } else {
@@ -31,22 +31,22 @@ const AdminCategories = () => {
     setEditing(null);
     setName("");
     fetchCategories();
-    toast.success(editing ? "Updated" : "Added");
+    toast.success(editing ? "تم التحديث" : "تمت الإضافة");
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete category?")) return;
+    if (!confirm("هل تريد حذف الفئة؟")) return;
     await supabase.from("categories").delete().eq("id", id);
     fetchCategories();
-    toast.success("Deleted");
+    toast.success("تم الحذف");
   };
 
   return (
     <div className="p-4 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Categories</h2>
+        <h2 className="text-lg font-semibold">الفئات</h2>
         <Button onClick={() => { setEditing(null); setName(""); setShowDialog(true); }} size="sm" className="rounded-xl gap-1">
-          <Plus className="w-4 h-4" /> Add
+          <Plus className="w-4 h-4" /> إضافة
         </Button>
       </div>
 
@@ -66,7 +66,7 @@ const AdminCategories = () => {
             </CardContent>
           </Card>
         ))}
-        {categories.length === 0 && <p className="text-center text-muted-foreground text-sm mt-8">No categories yet</p>}
+        {categories.length === 0 && <p className="text-center text-muted-foreground text-sm mt-8">لا توجد فئات بعد</p>}
       </div>
 
       <Dialog open={showDialog} onOpenChange={(open) => {
@@ -77,10 +77,10 @@ const AdminCategories = () => {
         }
       }}>
         <DialogContent className="max-w-sm rounded-2xl">
-          <DialogHeader><DialogTitle>{editing ? "Edit Category" : "Add Category"}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{editing ? "تعديل الفئة" : "إضافة فئة"}</DialogTitle></DialogHeader>
           <div className="space-y-3">
-            <Input placeholder="Category name" value={name} onChange={(e) => setName(e.target.value)} className="h-11 rounded-xl" />
-            <Button onClick={handleSave} className="w-full h-11 rounded-xl">{editing ? "Update" : "Add"}</Button>
+            <Input placeholder="اسم الفئة" value={name} onChange={(e) => setName(e.target.value)} className="h-11 rounded-xl" />
+            <Button onClick={handleSave} className="w-full h-11 rounded-xl">{editing ? "تحديث" : "إضافة"}</Button>
           </div>
         </DialogContent>
       </Dialog>

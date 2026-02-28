@@ -19,19 +19,19 @@ const CheckoutModal = ({ open, onClose, total, onConfirm }: CheckoutModalProps) 
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-sm mx-auto rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="text-center">Checkout</DialogTitle>
+          <DialogTitle className="text-center">الدفع</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-5 py-2">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Total Amount</p>
+            <p className="text-sm text-muted-foreground">المبلغ الإجمالي</p>
             <p className="text-3xl font-bold text-foreground tabular-nums">
-              {total.toLocaleString()} Dz
+              {total.toLocaleString()} دج
             </p>
           </div>
 
           <div>
-            <label className="text-sm text-muted-foreground mb-1 block">Money Received</label>
+            <label className="text-sm text-muted-foreground mb-1 block">المبلغ المستلم</label>
             <Input
               type="number"
               inputMode="numeric"
@@ -45,9 +45,9 @@ const CheckoutModal = ({ open, onClose, total, onConfirm }: CheckoutModalProps) 
 
           {paidAmount > 0 && (
             <div className="text-center">
-              <p className="text-sm text-muted-foreground">Change</p>
+              <p className="text-sm text-muted-foreground">الباقي</p>
               <p className={`text-2xl font-bold tabular-nums ${change >= 0 ? "text-foreground" : "text-destructive"}`}>
-                {change >= 0 ? change.toLocaleString() : "—"} Dz
+                {change >= 0 ? change.toLocaleString() : "—"} دج
               </p>
             </div>
           )}
@@ -60,7 +60,7 @@ const CheckoutModal = ({ open, onClose, total, onConfirm }: CheckoutModalProps) 
             disabled={paidAmount < total}
             className="w-full h-12 rounded-xl text-base font-semibold"
           >
-            Confirm Sale
+            تأكيد البيع
           </Button>
         </div>
       </DialogContent>

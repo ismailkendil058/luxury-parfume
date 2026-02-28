@@ -69,10 +69,10 @@ const WorkerPOS = () => {
       .insert({ worker_id: worker.id })
       .select()
       .single();
-    if (error) { toast.error("Failed to open section"); return; }
+    if (error) { toast.error("فشل فتح الجلسة"); return; }
     setSession(data as unknown as Session);
     setSectionRevenue(0);
-    toast.success("Section opened");
+    toast.success("تم فتح الجلسة");
   };
 
   const closeSection = async () => {
@@ -86,7 +86,7 @@ const WorkerPOS = () => {
     setCart([]);
     sessionStorage.removeItem("worker");
     navigate("/");
-    toast.success("Section closed");
+    toast.success("تم إغلاق الجلسة");
   };
 
   const addToCart = useCallback((product: Product, size?: ProductSize) => {
@@ -149,7 +149,7 @@ const WorkerPOS = () => {
       .select()
       .single();
 
-    if (error || !sale) { toast.error("Sale failed"); return; }
+    if (error || !sale) { toast.error("فشلت عملية البيع"); return; }
 
     const items = cart.map((item) => ({
       sale_id: sale.id,
@@ -170,16 +170,16 @@ const WorkerPOS = () => {
     setCart([]);
     setShowCheckout(false);
     fetchProducts(); // refresh stock
-    toast.success("Sale completed!");
+    toast.success("اكتملت عملية البيع!");
   };
 
   const handleBarcodeScan = (barcode: string) => {
     const product = products.find((p) => p.barcode === barcode);
     if (product) {
       addToCart(product);
-      toast.success(`Added ${product.name}`);
+      toast.success(`تمت إضافة ${product.name}`);
     } else {
-      toast.error("Product not found");
+      toast.error("المنتج غير موجود");
     }
   };
 
@@ -238,7 +238,7 @@ const WorkerPOS = () => {
       ) : (
         <div className="flex-1 flex items-center justify-center px-6">
           <p className="text-muted-foreground text-center">
-            Open a section to start selling
+            افتح جلسة لبدء البيع
           </p>
         </div>
       )}

@@ -44,7 +44,7 @@ const Cart = ({ items, total, onUpdateQuantity, onCheckout }: CartProps) => {
                     <Plus className="w-3 h-3" />
                   </button>
                   <span className="w-20 text-right font-medium tabular-nums">
-                    {(Number(price) * item.quantity).toLocaleString()} Dz
+                    {(Number(price) * item.quantity).toLocaleString()} دج
                   </span>
                 </div>
               </div>
@@ -55,7 +55,7 @@ const Cart = ({ items, total, onUpdateQuantity, onCheckout }: CartProps) => {
           onClick={onCheckout}
           className="w-full py-3 rounded-2xl bg-foreground text-background font-semibold text-base active:scale-[0.98] transition-transform"
         >
-          Cashout · {total.toLocaleString()} Dz
+          الدفع · {total.toLocaleString()} دج
         </button>
       </div>
     </motion.div>

@@ -29,11 +29,11 @@ const AdminLayout = () => {
   if (loading) return <div className="min-h-screen bg-background" />;
 
   const links = [
-    { to: "/admin", icon: BarChart3, label: "Analytics", end: true },
-    { to: "/admin/workers", icon: Users, label: "Workers" },
-    { to: "/admin/categories", icon: Layers, label: "Categories" },
-    { to: "/admin/products", icon: Package, label: "Products" },
-    { to: "/admin/inventory", icon: Warehouse, label: "Inventory" },
+    { to: "/admin", icon: BarChart3, label: "الإحصائيات", end: true },
+    { to: "/admin/workers", icon: Users, label: "العمال" },
+    { to: "/admin/categories", icon: Layers, label: "الفئات" },
+    { to: "/admin/products", icon: Package, label: "المنتجات" },
+    { to: "/admin/inventory", icon: Warehouse, label: "المخزون" },
   ];
 
   return (
@@ -57,8 +57,7 @@ const AdminLayout = () => {
               to={link.to}
               end={link.end}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-0.5 px-2 py-1 text-xs transition-colors ${
-                  isActive ? "text-foreground" : "text-muted-foreground"
+                `flex flex-col items-center gap-0.5 px-2 py-1 text-xs transition-colors ${isActive ? "text-foreground" : "text-muted-foreground"
                 }`
               }
             >
