@@ -5,16 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, X, ScanBarcode } from "lucide-react";
+import { Plus, Pencil, Trash2, ScanBarcode } from "lucide-react";
 import { toast } from "sonner";
 import BarcodeScanner from "@/components/pos/BarcodeScanner";
-
-interface SizeEntry {
-  size_ml: string;
-  selling_price: string;
-  purchase_price: string;
-  stock: string;
-}
 
 const AdminProducts = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -30,7 +23,6 @@ const AdminProducts = () => {
   const [categoryId, setCategoryId] = useState("");
   const [quantityType, setQuantityType] = useState("unit");
   const [stock, setStock] = useState("");
-  const [sizes, setSizes] = useState<SizeEntry[]>([]);
 
   useEffect(() => {
     fetchProducts();
@@ -38,7 +30,7 @@ const AdminProducts = () => {
   }, []);
 
   const fetchProducts = async () => {
-    const { data } = await supabase.from("products").select("*, product_sizes(*), categories(name)").order("created_at");
+    const { data } = await supabase.from("products").select("*, categories(name)").order("created_at");
     if (data) setProducts(data);
   };
 
@@ -49,7 +41,7 @@ const AdminProducts = () => {
 
   const resetForm = () => {
     setName(""); setPurchasePrice(""); setSellingPrice(""); setBarcode("");
-    setCategoryId(""); setQuantityType("unit"); setStock(""); setSizes([]);
+    setCategoryId(""); setQuantityType("unit"); setStock("");
     setEditing(null);
     setShowScanner(false);
   };
@@ -63,14 +55,6 @@ const AdminProducts = () => {
     setCategoryId(p.category_id || "");
     setQuantityType(p.quantity_type);
     setStock(String(p.stock));
-    setSizes(
-      (p.product_sizes || []).map((s: any) => ({
-        size_ml: String(s.size_ml),
-        selling_price: String(s.selling_price),
-        purchase_price: String(s.purchase_price),
-        stock: String(s.stock),
-      }))
-    );
     setShowDialog(true);
   };
 
@@ -93,26 +77,10 @@ const AdminProducts = () => {
       const { error } = await supabase.from("products").update(productData).eq("id", editing.id);
       if (error) { toast.error("فشل التحديث"); return; }
       productId = editing.id;
-      await supabase.from("product_sizes").delete().eq("product_id", productId);
     } else {
       const { data, error } = await supabase.from("products").insert(productData).select().single();
       if (error || !data) { toast.error("فشل الإنشاء"); return; }
       productId = data.id;
-    }
-
-    if (quantityType === "ml" && sizes.length > 0) {
-      const sizeData = sizes
-        .filter((s) => s.size_ml)
-        .map((s) => ({
-          product_id: productId,
-          size_ml: Number(s.size_ml),
-          selling_price: Number(s.selling_price) || 0,
-          purchase_price: Number(s.purchase_price) || 0,
-          stock: Number(s.stock) || 0,
-        }));
-      if (sizeData.length > 0) {
-        await supabase.from("product_sizes").insert(sizeData);
-      }
     }
 
     setShowDialog(false);
@@ -126,14 +94,6 @@ const AdminProducts = () => {
     await supabase.from("products").delete().eq("id", id);
     fetchProducts();
     toast.success("تم الحذف");
-  };
-
-  const addSize = () => setSizes([...sizes, { size_ml: "", selling_price: "", purchase_price: "", stock: "" }]);
-  const removeSize = (i: number) => setSizes(sizes.filter((_, idx) => idx !== i));
-  const updateSize = (i: number, field: keyof SizeEntry, value: string) => {
-    const newSizes = [...sizes];
-    newSizes[i][field] = value;
-    setSizes(newSizes);
   };
 
   const handleBarcodeScan = (scannedBarcode: string) => {
@@ -228,33 +188,10 @@ const AdminProducts = () => {
               <SelectTrigger className="h-11 rounded-xl"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="unit">بالوحدة</SelectItem>
-                <SelectItem value="ml">بالملليلتر (أحجام)</SelectItem>
               </SelectContent>
             </Select>
 
-            {quantityType === "unit" && (
-              <Input placeholder="كمية المخزون" type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="h-11 rounded-xl" />
-            )}
-
-            {quantityType === "ml" && (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium">الأحجام</p>
-                  <Button type="button" variant="outline" size="sm" onClick={addSize} className="rounded-xl gap-1">
-                    <Plus className="w-3 h-3" /> حجم
-                  </Button>
-                </div>
-                {sizes.map((s, i) => (
-                  <div key={i} className="grid grid-cols-5 gap-1 items-center">
-                    <Input placeholder="ml" value={s.size_ml} onChange={(e) => updateSize(i, "size_ml", e.target.value)} className="h-9 rounded-lg text-xs" />
-                    <Input placeholder="شراء" value={s.purchase_price} onChange={(e) => updateSize(i, "purchase_price", e.target.value)} className="h-9 rounded-lg text-xs" />
-                    <Input placeholder="بيع" value={s.selling_price} onChange={(e) => updateSize(i, "selling_price", e.target.value)} className="h-9 rounded-lg text-xs" />
-                    <Input placeholder="المخزون" value={s.stock} onChange={(e) => updateSize(i, "stock", e.target.value)} className="h-9 rounded-lg text-xs" />
-                    <button onClick={() => removeSize(i)} className="p-1 text-destructive" title="Remove size"><X className="w-4 h-4" /></button>
-                  </div>
-                ))}
-              </div>
-            )}
+            <Input placeholder="كمية المخزون" type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="h-11 rounded-xl" />
 
             <Button onClick={handleSave} className="w-full h-11 rounded-xl">{editing ? "تحديث" : "إضافة منتج"}</Button>
           </div>

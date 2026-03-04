@@ -57,7 +57,7 @@ const WorkerLogin = () => {
       >
         <div className="text-center mb-10">
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            Luxury Parfume
+            Alimentation Issam
           </h1>
           <p className="text-sm text-muted-foreground mt-2">أدخل رمز PIN الخاص بك للمتابعة</p>
         </div>
