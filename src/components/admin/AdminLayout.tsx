@@ -1,33 +1,7 @@
-import { useState, useEffect } from "react";
-import { NavLink, useNavigate, Outlet } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { BarChart3, Users, Layers, Package, Warehouse, LogOut } from "lucide-react";
+import { NavLink, Outlet } from "react-router-dom";
+import { BarChart3, Users, Layers, Package, Warehouse } from "lucide-react";
 
 const AdminLayout = () => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { navigate("/admin/login"); return; }
-      setLoading(false);
-    };
-    checkAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) navigate("/admin/login");
-    });
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/admin/login");
-  };
-
-  if (loading) return <div className="min-h-screen bg-background" />;
-
   const links = [
     { to: "/admin", icon: BarChart3, label: "الإحصائيات", end: true },
     { to: "/admin/workers", icon: Users, label: "العمال" },
@@ -40,9 +14,6 @@ const AdminLayout = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <header className="px-4 py-3 border-b border-border flex items-center justify-between sticky top-0 bg-background z-30">
         <h1 className="font-semibold tracking-tight">Alimentation Issam</h1>
-        <button onClick={handleLogout} className="p-2 hover:bg-secondary rounded-xl">
-          <LogOut className="w-4 h-4" />
-        </button>
       </header>
 
       <div className="flex-1 overflow-y-auto pb-20">
