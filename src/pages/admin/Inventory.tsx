@@ -15,9 +15,11 @@ const AdminInventory = () => {
     fetchProducts();
   }, []);
 
-  const filtered = products.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = products.filter((p) => {
+    const s = search.toLowerCase();
+    return p.name.toLowerCase().startsWith(s) ||
+      p.selling_price.toString().startsWith(s);
+  });
 
   return (
     <div className="p-4 space-y-4">

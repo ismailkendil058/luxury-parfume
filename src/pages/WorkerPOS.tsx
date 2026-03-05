@@ -165,7 +165,11 @@ const WorkerPOS = () => {
   };
 
   const filteredProducts = products.filter((p) => {
-    return !search || p.name.toLowerCase().includes(search.toLowerCase());
+    const s = search.toLowerCase();
+    const matchesSearch = !search ||
+      p.name.toLowerCase().startsWith(s) ||
+      p.selling_price.toString().startsWith(s);
+    return matchesSearch;
   });
 
   if (!worker) return null;

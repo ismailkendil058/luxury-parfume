@@ -162,10 +162,10 @@ const AdminProducts = () => {
                 className="h-11 rounded-xl"
                 autoComplete="off"
               />
-              {showSuggestions && name && !editing && uniqueProducts.filter((p) => p.name.toLowerCase().includes(name.toLowerCase())).length > 0 && (
+              {showSuggestions && name && !editing && uniqueProducts.filter((p) => p.name.toLowerCase().startsWith(name.toLowerCase())).length > 0 && (
                 <div className="absolute top-full mt-1 w-full bg-background border border-border/50 rounded-xl shadow-lg z-[100] max-h-48 overflow-y-auto">
                   {uniqueProducts
-                    .filter((p) => p.name.toLowerCase().includes(name.toLowerCase()))
+                    .filter((p) => p.name.toLowerCase().startsWith(name.toLowerCase()))
                     .map((p) => (
                       <div
                         key={p.id}
