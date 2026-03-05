@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -44,9 +43,7 @@ const SectionControl = ({ workerName, sectionRevenue, isOpen, onOpen, onClose }:
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div
         className="px-4 pt-4 pb-3 border-b border-border bg-background sticky top-0 z-30"
       >
         <div className="flex items-center justify-between mb-3">
@@ -76,7 +73,7 @@ const SectionControl = ({ workerName, sectionRevenue, isOpen, onOpen, onClose }:
             </Button>
           )}
         </div>
-      </motion.div>
+      </div>
 
       {/* Confirmation Dialog for Opening Session */}
       <AlertDialog open={openStartDialog} onOpenChange={setOpenStartDialog}>

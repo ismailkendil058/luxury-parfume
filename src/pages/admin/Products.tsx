@@ -16,6 +16,10 @@ const AdminProducts = () => {
   const [purchasePrice, setPurchasePrice] = useState("");
   const [sellingPrice, setSellingPrice] = useState("");
   const [stock, setStock] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Get unique products by name for suggestions
+  const uniqueProducts = Array.from(new Map(products.map((p) => [p.name, p])).values());
 
   useEffect(() => {
     fetchProducts();
@@ -57,16 +61,36 @@ const AdminProducts = () => {
       const { error } = await supabase.from("products").update(productData).eq("id", editing.id);
       if (error) { toast.error("فشل التحديث"); return; }
       productId = editing.id;
+      toast.success("تم تحديث المنتج");
     } else {
-      const { data, error } = await supabase.from("products").insert(productData).select().single();
-      if (error || !data) { toast.error("فشل الإنشاء"); return; }
-      productId = data.id;
+      const existingProduct = products.find(
+        (p) =>
+          p.name === productData.name &&
+          Number(p.purchase_price) === productData.purchase_price &&
+          Number(p.selling_price) === productData.selling_price
+      );
+
+      if (existingProduct) {
+        const newStock = Number(existingProduct.stock || 0) + productData.stock;
+        const { error } = await supabase
+          .from("products")
+          .update({ stock: newStock })
+          .eq("id", existingProduct.id);
+
+        if (error) { toast.error("فشل تحديث الكمية"); return; }
+        productId = existingProduct.id;
+        toast.success("هذا المنتج موجود مسبقاً، تم إضافة الكمية بنجاح");
+      } else {
+        const { data, error } = await supabase.from("products").insert(productData).select().single();
+        if (error || !data) { toast.error("فشل الإنشاء"); return; }
+        productId = data.id;
+        toast.success("تمت إضافة المنتج");
+      }
     }
 
     setShowDialog(false);
     resetForm();
     fetchProducts();
-    toast.success(editing ? "تم تحديث المنتج" : "تمت إضافة المنتج");
   };
 
   const handleDelete = async (id: string) => {
@@ -87,7 +111,7 @@ const AdminProducts = () => {
 
       <div className="space-y-3">
         {products.map((p) => (
-          <Card key={p.id} className="rounded-2xl luxury-shadow border-border/50">
+          <Card key={p.id} className="rounded-xl shadow-sm border-border">
             <CardContent className="p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
@@ -125,7 +149,41 @@ const AdminProducts = () => {
           </DialogHeader>
 
           <div className="space-y-3">
-            <Input placeholder="اسم المنتج" value={name} onChange={(e) => setName(e.target.value)} className="h-11 rounded-xl" />
+            <div className="relative">
+              <Input
+                placeholder="اسم المنتج"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setShowSuggestions(true);
+                }}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                className="h-11 rounded-xl"
+                autoComplete="off"
+              />
+              {showSuggestions && name && !editing && uniqueProducts.filter((p) => p.name.toLowerCase().includes(name.toLowerCase())).length > 0 && (
+                <div className="absolute top-full mt-1 w-full bg-background border border-border/50 rounded-xl shadow-lg z-[100] max-h-48 overflow-y-auto">
+                  {uniqueProducts
+                    .filter((p) => p.name.toLowerCase().includes(name.toLowerCase()))
+                    .map((p) => (
+                      <div
+                        key={p.id}
+                        className="px-4 py-3 hover:bg-secondary cursor-pointer border-b border-border/50 last:border-0 text-sm transition-colors text-right"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          setName(p.name);
+                          setPurchasePrice(String(p.purchase_price));
+                          setSellingPrice(String(p.selling_price));
+                          setShowSuggestions(false);
+                        }}
+                      >
+                        {p.name}
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
 
             <div className="grid grid-cols-2 gap-2">
               <Input placeholder="سعر الشراء (دج)" type="number" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} className="h-11 rounded-xl" />

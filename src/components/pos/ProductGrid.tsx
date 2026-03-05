@@ -1,6 +1,5 @@
 import { useState } from "react";
 import type { Product, ProductSize } from "@/types";
-import { motion } from "framer-motion";
 
 interface ProductGridProps {
   products: Product[];
@@ -37,9 +36,8 @@ const ProductCard = ({
     : product.stock > 0;
 
   return (
-    <motion.div
-      whileTap={{ scale: 0.97 }}
-      className="bg-card rounded-2xl p-3 luxury-shadow border border-border/50"
+    <div
+      className="bg-card rounded-xl p-3 shadow-sm border border-border transition-transform active:scale-[0.98]"
     >
       <div className="mb-2">
         <h3 className="font-medium text-sm text-foreground leading-tight line-clamp-2">
@@ -60,8 +58,8 @@ const ProductCard = ({
               key={size.id}
               onClick={() => setSelectedSize(size.id === selectedSize?.id ? null : size)}
               className={`px-2 py-1 rounded-lg text-xs font-medium transition-colors ${selectedSize?.id === size.id
-                  ? "bg-foreground text-background"
-                  : "bg-secondary text-foreground"
+                ? "bg-foreground text-background"
+                : "bg-secondary text-foreground"
                 } ${size.stock <= 0 ? "opacity-40" : ""}`}
               disabled={size.stock <= 0}
             >
@@ -81,7 +79,7 @@ const ProductCard = ({
       >
         إضافة
       </button>
-    </motion.div>
+    </div>
   );
 };
 

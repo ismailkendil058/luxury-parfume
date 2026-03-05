@@ -85,7 +85,7 @@ const AdminWorkers = () => {
         {workers.map((w) => {
           const stat = workerStats.get(w.id);
           return (
-            <Card key={w.id} className="rounded-2xl luxury-shadow border-border/50">
+            <Card key={w.id} className="rounded-xl shadow-sm border-border">
               <CardContent className="p-4 flex items-center justify-between">
                 <div>
                   <p className="font-medium">{w.name}</p>

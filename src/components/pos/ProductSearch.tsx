@@ -13,7 +13,7 @@ const ProductSearch = ({ search, onSearchChange }: ProductSearchProps) => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="البحث عن المنتجات أو الرمز الشريطي..."
+            placeholder="البحث عن المنتجات..."
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9 h-11 rounded-xl bg-secondary border-0"

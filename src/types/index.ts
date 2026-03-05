@@ -15,7 +15,7 @@ export interface Product {
   name: string;
   purchase_price: number;
   selling_price: number;
-  barcode: string | null;
+
   category_id: string | null;
   quantity_type: 'unit' | 'ml';
   stock: number;

@@ -52,7 +52,7 @@ const AdminCategories = () => {
 
       <div className="space-y-3">
         {categories.map((c) => (
-          <Card key={c.id} className="rounded-2xl luxury-shadow border-border/50">
+          <Card key={c.id} className="rounded-xl shadow-sm border-border">
             <CardContent className="p-4 flex items-center justify-between">
               <p className="font-medium">{c.name}</p>
               <div className="flex gap-1">

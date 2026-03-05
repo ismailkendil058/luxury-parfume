@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import type { CartItem, Product, Category, ProductSize, Session } from "@/types";
+import type { CartItem, Product, ProductSize, Session } from "@/types";
 import SectionControl from "@/components/pos/SectionControl";
 import ProductSearch from "@/components/pos/ProductSearch";
-import CategoryCarousel from "@/components/pos/CategoryCarousel";
 import ProductGrid from "@/components/pos/ProductGrid";
 import Cart from "@/components/pos/Cart";
 import CheckoutModal from "@/components/pos/CheckoutModal";
@@ -15,7 +14,6 @@ const WorkerPOS = () => {
   const [worker, setWorker] = useState<{ id: string; name: string } | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -30,7 +28,6 @@ const WorkerPOS = () => {
 
   useEffect(() => {
     fetchProducts();
-    fetchCategories();
   }, []);
 
   useEffect(() => {
@@ -55,11 +52,6 @@ const WorkerPOS = () => {
   const fetchProducts = async () => {
     const { data } = await supabase.from("products").select("*, product_sizes(*)");
     if (data) setProducts(data as unknown as Product[]);
-  };
-
-  const fetchCategories = async () => {
-    const { data } = await supabase.from("categories").select("*");
-    if (data) setCategories(data as unknown as Category[]);
   };
 
   const openSection = async () => {
@@ -176,8 +168,7 @@ const WorkerPOS = () => {
   const filteredProducts = products.filter((p) => {
     const matchesSearch =
       !search ||
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      (p.barcode && p.barcode.includes(search));
+      p.name.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = !selectedCategory || p.category_id === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -199,11 +190,6 @@ const WorkerPOS = () => {
           <ProductSearch
             search={search}
             onSearchChange={setSearch}
-          />
-          <CategoryCarousel
-            categories={categories}
-            selected={selectedCategory}
-            onSelect={setSelectedCategory}
           />
           <ProductGrid
             products={filteredProducts}

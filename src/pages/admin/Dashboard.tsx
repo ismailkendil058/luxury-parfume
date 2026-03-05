@@ -9,8 +9,212 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { Calendar as CalendarIcon, Clock } from "lucide-react";
 
+const monthNamesArabic = ["جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+
+const GroupedWorkerSessions = ({
+  period,
+  customDate,
+  workerSessions,
+  stats,
+  onSessionClick
+}: {
+  period: string,
+  customDate: Date | undefined,
+  workerSessions: { [workerId: string]: any[] },
+  stats: any,
+  onSessionClick: (s: any) => void
+}) => {
+  const [expandedMonth, setExpandedMonth] = useState<number | null>(null);
+  const [expandedDay, setExpandedDay] = useState<number | null>(null);
+
+  useEffect(() => {
+    setExpandedMonth(null);
+    setExpandedDay(null);
+  }, [period, customDate]);
+
+  if (period === "today" || customDate) {
+    return (
+      <div className="space-y-3">
+        {stats.workerStats.map((w: any, i: number) => {
+          const sessions = workerSessions[w.workerId] || [];
+          return (
+            <div key={i}>
+              <div className="flex justify-between text-sm mb-2">
+                <span className="font-medium">{w.name}</span>
+                <div className="text-right tabular-nums">
+                  <span>{w.revenue.toLocaleString()} دج</span>
+                  <span className="text-muted-foreground ml-2">({w.profit.toLocaleString()} أرباح)</span>
+                </div>
+              </div>
+              {sessions.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {sessions.map((session: any) => (
+                    <Button
+                      key={session.id}
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs bg-background/50 hover:bg-background"
+                      onClick={() => onSessionClick(session)}
+                    >
+                      <Clock className="ml-1 h-3 w-3" />
+                      {new Date(session.started_at).toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit' })}
+                    </Button>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  const allSessions: any[] = [];
+  Object.values(workerSessions).forEach(arr => allSessions.push(...arr));
+
+  const getWorkerName = (id: string) => {
+    const worker = stats.workerStats.find((w: any) => w.workerId === id);
+    return worker ? worker.name : "Unknown";
+  };
+
+  const renderDaySessions = (daySessions: any[]) => {
+    const byWorker: Record<string, any[]> = {};
+    daySessions.forEach(s => {
+      if (!byWorker[s.worker_id]) byWorker[s.worker_id] = [];
+      byWorker[s.worker_id].push(s);
+    });
+
+    return (
+      <div className="space-y-3 p-3 bg-muted/20 border border-border/50 rounded-lg animate-in fade-in slide-in-from-top-1 mt-2">
+        {Object.entries(byWorker).map(([workerId, sessions]) => (
+          <div key={workerId} className="border-b border-border/50 last:border-0 pb-2 last:pb-0">
+            <span className="text-sm font-medium mb-2 block">{getWorkerName(workerId)}</span>
+            <div className="flex flex-wrap gap-1">
+              {sessions.map((session: any) => (
+                <Button
+                  key={session.id}
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs bg-background/80 hover:bg-background"
+                  onClick={() => onSessionClick(session)}
+                >
+                  <Clock className="ml-1 h-3 w-3" />
+                  {new Date(session.started_at).toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit' })}
+                  <span className="ml-1 text-muted-foreground mr-1 tabular-nums mix-blend-opacity-50">
+                    ({Number(session.total_revenue || 0).toLocaleString()} دج)
+                  </span>
+                </Button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  if (period === "month") {
+    const byDay: Record<number, any[]> = {};
+    allSessions.forEach(s => {
+      const d = new Date(s.started_at).getDate();
+      if (!byDay[d]) byDay[d] = [];
+      byDay[d].push(s);
+    });
+
+    const sortedDays = Object.keys(byDay).map(Number).sort((a, b) => a - b);
+
+    return (
+      <div className="space-y-2 mt-2">
+        <div className="flex flex-wrap gap-1">
+          {sortedDays.map(d => (
+            <Button
+              key={d}
+              variant={expandedDay === d ? "default" : "outline"}
+              size="sm"
+              className="h-7 text-xs"
+              onClick={() => setExpandedDay(expandedDay === d ? null : d)}
+            >
+              يوم {d}
+            </Button>
+          ))}
+        </div>
+
+        {expandedDay !== null && byDay[expandedDay] && (
+          renderDaySessions(byDay[expandedDay])
+        )}
+      </div>
+    );
+  }
+
+  if (period === "year") {
+    const byMonth: Record<number, any[]> = {};
+    allSessions.forEach(s => {
+      const m = new Date(s.started_at).getMonth();
+      if (!byMonth[m]) byMonth[m] = [];
+      byMonth[m].push(s);
+    });
+
+    const sortedMonths = Object.keys(byMonth).map(Number).sort((a, b) => a - b);
+
+    return (
+      <div className="space-y-2 mt-2">
+        <div className="flex flex-wrap gap-1">
+          {sortedMonths.map(m => (
+            <Button
+              key={m}
+              variant={expandedMonth === m ? "default" : "outline"}
+              size="sm"
+              className="h-7 text-xs"
+              onClick={() => {
+                setExpandedMonth(expandedMonth === m ? null : m);
+                setExpandedDay(null);
+              }}
+            >
+              {monthNamesArabic[m]}
+            </Button>
+          ))}
+        </div>
+
+        {expandedMonth !== null && byMonth[expandedMonth] && (() => {
+          const byDay: Record<number, any[]> = {};
+          byMonth[expandedMonth].forEach(s => {
+            const d = new Date(s.started_at).getDate();
+            if (!byDay[d]) byDay[d] = [];
+            byDay[d].push(s);
+          });
+
+          const sortedDays = Object.keys(byDay).map(Number).sort((a, b) => a - b);
+
+          return (
+            <div className="space-y-2 p-3 bg-muted/10 border border-border/50 rounded-lg animate-in fade-in slide-in-from-top-1 mt-2">
+              <div className="flex flex-wrap gap-1">
+                {sortedDays.map(d => (
+                  <Button
+                    key={d}
+                    variant={expandedDay === d ? "default" : "outline"}
+                    size="sm"
+                    className="h-7 text-xs bg-background/50 hover:bg-background"
+                    onClick={() => setExpandedDay(expandedDay === d ? null : d)}
+                  >
+                    يوم {d}
+                  </Button>
+                ))}
+              </div>
+
+              {expandedDay !== null && byDay[expandedDay] && (
+                renderDaySessions(byDay[expandedDay])
+              )}
+            </div>
+          );
+        })()}
+      </div>
+    );
+  }
+
+  return null;
+};
+
 const AdminDashboard = () => {
-  const [period, setPeriod] = useState("month");
+  const [period, setPeriod] = useState("today");
   const [customDate, setCustomDate] = useState<Date | undefined>(undefined);
   const [stats, setStats] = useState({ revenue: 0, profit: 0, workerStats: [] as any[] });
   const [chartData, setChartData] = useState<any[]>([]);
@@ -30,7 +234,7 @@ const AdminDashboard = () => {
   const getDateRange = () => {
     const now = new Date();
     let start: Date;
-    
+
     if (customDate) {
       // Custom date selected - show just that day
       start = new Date(customDate.getFullYear(), customDate.getMonth(), customDate.getDate());
@@ -79,7 +283,7 @@ const AdminDashboard = () => {
     const year = now.getFullYear();
     const month = now.getMonth();
     const date = now.getDate();
-    
+
     let startDate: string;
     let endDate: string;
     let dataMap: any[] = [];
@@ -89,11 +293,11 @@ const AdminDashboard = () => {
       const customYear = customDate.getFullYear();
       const customMonth = customDate.getMonth();
       const customDay = customDate.getDate();
-      
+
       const dayStart = new Date(customYear, customMonth, customDay);
       startDate = dayStart.toISOString();
       endDate = new Date(customYear, customMonth, customDay, 23, 59, 59).toISOString();
-      
+
       // Show 24 hours for custom day
       dataMap = Array.from({ length: 24 }, (_, i) => ({
         label: `${i}:00`,
@@ -105,7 +309,7 @@ const AdminDashboard = () => {
       const today = new Date(year, month, date);
       startDate = today.toISOString();
       endDate = new Date(year, month, date, 23, 59, 59).toISOString();
-      
+
       // Initialize 24 hours
       dataMap = Array.from({ length: 24 }, (_, i) => ({
         label: `${i}:00`,
@@ -117,10 +321,10 @@ const AdminDashboard = () => {
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
       const daysInMonth = lastDay.getDate();
-      
+
       startDate = firstDay.toISOString();
       endDate = lastDay.toISOString();
-      
+
       // Initialize days of month
       dataMap = Array.from({ length: daysInMonth }, (_, i) => ({
         label: `${i + 1}`,
@@ -131,7 +335,7 @@ const AdminDashboard = () => {
       // Year view - existing behavior
       startDate = `${year}-01-01`;
       endDate = `${year}-12-31`;
-      
+
       // Initialize 12 months
       dataMap = Array.from({ length: 12 }, (_, i) => {
         const monthName = new Date(year, i).toLocaleString("default", { month: "short" });
@@ -149,7 +353,7 @@ const AdminDashboard = () => {
 
     sales.forEach((s) => {
       const saleDate = new Date(s.created_at);
-      
+
       // For custom date, group by hour
       if (customDate || period === "today") {
         const hour = saleDate.getHours();
@@ -171,7 +375,7 @@ const AdminDashboard = () => {
 
   const fetchWorkerSessions = async () => {
     const since = getDateRange();
-    
+
     // Fetch sessions for the date range
     const { data: sessions } = await supabase
       .from("sessions")
@@ -243,8 +447,8 @@ const AdminDashboard = () => {
         <div className="flex items-center gap-2">
           <Popover>
             <PopoverTrigger asChild>
-              <Button 
-                variant={customDate ? "default" : "outline"} 
+              <Button
+                variant={customDate ? "default" : "outline"}
                 className="h-9 rounded-xl"
               >
                 <CalendarIcon className="ml-2 h-4 w-4" />
@@ -284,13 +488,13 @@ const AdminDashboard = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Card className="rounded-2xl luxury-shadow border-border/50">
+        <Card className="rounded-xl shadow-sm border-border">
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">الإيرادات</p>
             <p className="text-xl font-bold mt-1 tabular-nums">{stats.revenue.toLocaleString()} دج</p>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl luxury-shadow border-border/50">
+        <Card className="rounded-xl shadow-sm border-border">
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">الأرباح</p>
             <p className="text-xl font-bold mt-1 tabular-nums">{stats.profit.toLocaleString()} دج</p>
@@ -300,45 +504,19 @@ const AdminDashboard = () => {
 
       {
         stats.workerStats.length > 0 && (
-          <Card className="rounded-2xl luxury-shadow border-border/50">
+          <Card className="rounded-xl shadow-sm border-border">
             <CardContent className="p-4">
               <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">حسب العامل</p>
-              <div className="space-y-3">
-                {stats.workerStats.map((w, i) => {
-                  const sessions = workerSessions[w.workerId] || [];
-                  
-                  return (
-                    <div key={i}>
-                      <div className="flex justify-between text-sm mb-2">
-                        <span className="font-medium">{w.name}</span>
-                        <div className="text-right tabular-nums">
-                          <span>{w.revenue.toLocaleString()} دج</span>
-                          <span className="text-muted-foreground ml-2">({w.profit.toLocaleString()} أرباح)</span>
-                        </div>
-                      </div>
-                      {sessions.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {sessions.map((session) => (
-                            <Button
-                              key={session.id}
-                              variant="outline"
-                              size="sm"
-                              className="h-7 text-xs"
-                              onClick={() => {
-                                setSelectedSession(session);
-                                fetchSessionProducts(session.id);
-                              }}
-                            >
-                              <Clock className="ml-1 h-3 w-3" />
-                              {new Date(session.started_at).toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit' })}
-                            </Button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+              <GroupedWorkerSessions
+                period={period}
+                customDate={customDate}
+                workerSessions={workerSessions}
+                stats={stats}
+                onSessionClick={(session) => {
+                  setSelectedSession(session);
+                  fetchSessionProducts(session.id);
+                }}
+              />
             </CardContent>
           </Card>
         )
@@ -367,7 +545,7 @@ const AdminDashboard = () => {
                   <span>وقت الإغلاق:</span>
                 </div>
                 <span className="font-medium">
-                  {selectedSession.closed_at 
+                  {selectedSession.closed_at
                     ? new Date(selectedSession.closed_at).toLocaleString("en-US")
                     : "مفتوحة"}
                 </span>
@@ -397,7 +575,7 @@ const AdminDashboard = () => {
         </DialogContent>
       </Dialog>
 
-      <Card className="rounded-2xl luxury-shadow border-border/50">
+      <Card className="rounded-xl shadow-sm border-border">
         <CardContent className="p-4">
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-4">الإحصائيات</p>
           <div className="h-56">

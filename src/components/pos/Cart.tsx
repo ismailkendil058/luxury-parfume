@@ -1,5 +1,4 @@
 import type { CartItem } from "@/types";
-import { motion } from "framer-motion";
 import { Minus, Plus } from "lucide-react";
 
 interface CartProps {
@@ -11,10 +10,8 @@ interface CartProps {
 
 const Cart = ({ items, total, onUpdateQuantity, onCheckout }: CartProps) => {
   return (
-    <motion.div
-      initial={{ y: 100 }}
-      animate={{ y: 0 }}
-      className="fixed bottom-0 left-0 right-0 bg-card border-t border-border z-40 luxury-shadow-lg"
+    <div
+      className="fixed bottom-0 left-0 right-0 bg-card border-t border-border z-40 shadow-md transition-transform"
     >
       <div className="max-w-lg mx-auto px-4 py-3">
         <div className="max-h-36 overflow-y-auto mb-3 space-y-2">
@@ -58,7 +55,7 @@ const Cart = ({ items, total, onUpdateQuantity, onCheckout }: CartProps) => {
           الدفع · {total.toLocaleString()} دج
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

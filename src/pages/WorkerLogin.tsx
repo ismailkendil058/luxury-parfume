@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { motion } from "framer-motion";
+
 
 const WorkerLogin = () => {
   const [pin, setPin] = useState("");
@@ -50,10 +50,8 @@ const WorkerLogin = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-xs"
+      <div
+        className="w-full max-w-xs fade-in"
       >
         <div className="text-center mb-10">
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
@@ -64,25 +62,22 @@ const WorkerLogin = () => {
 
         <div className="flex justify-center gap-3 mb-8">
           {[0, 1, 2, 3].map((i) => (
-            <motion.div
+            <div
               key={i}
-              animate={{ scale: pin.length > i ? 1 : 0.8 }}
               className={`w-4 h-4 rounded-full border-2 transition-colors duration-200 ${pin.length > i
-                  ? "bg-foreground border-foreground"
-                  : "border-muted-foreground/30"
+                ? "bg-foreground border-foreground scale-100"
+                : "border-muted-foreground/30 scale-90"
                 }`}
             />
           ))}
         </div>
 
         {error && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center text-destructive text-sm mb-4"
+          <p
+            className="text-center text-destructive text-sm mb-4 fade-in"
           >
             {error}
-          </motion.p>
+          </p>
         )}
 
         <div className="grid grid-cols-3 gap-3">
@@ -103,19 +98,18 @@ const WorkerLogin = () => {
                   </svg>
                 </button>
               ) : (
-                <motion.button
-                  whileTap={{ scale: 0.92 }}
+                <button
                   onClick={() => handleDigit(d)}
                   disabled={loading}
-                  className="w-full aspect-square rounded-2xl bg-secondary text-foreground text-xl font-medium hover:bg-accent transition-colors flex items-center justify-center"
+                  className="w-full aspect-square rounded-2xl bg-secondary text-foreground text-xl font-medium hover:bg-accent transition-transform active:scale-95 flex items-center justify-center"
                 >
                   {d}
-                </motion.button>
+                </button>
               )}
             </div>
           ))}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
