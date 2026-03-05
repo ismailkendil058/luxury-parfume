@@ -16,7 +16,6 @@ const WorkerPOS = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
   const [sectionRevenue, setSectionRevenue] = useState(0);
 
@@ -166,11 +165,7 @@ const WorkerPOS = () => {
   };
 
   const filteredProducts = products.filter((p) => {
-    const matchesSearch =
-      !search ||
-      p.name.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = !selectedCategory || p.category_id === selectedCategory;
-    return matchesSearch && matchesCategory;
+    return !search || p.name.toLowerCase().includes(search.toLowerCase());
   });
 
   if (!worker) return null;

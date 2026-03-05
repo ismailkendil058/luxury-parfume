@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { BarChart3, Users, Layers, Package, Warehouse } from "lucide-react";
+import { BarChart3, Users, Package, Warehouse } from "lucide-react";
 
 const AdminLayout = () => {
   const links = [

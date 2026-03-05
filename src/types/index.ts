@@ -4,11 +4,7 @@ export interface Worker {
   created_at: string;
 }
 
-export interface Category {
-  id: string;
-  name: string;
-  created_at: string;
-}
+
 
 export interface Product {
   id: string;
@@ -16,7 +12,7 @@ export interface Product {
   purchase_price: number;
   selling_price: number;
 
-  category_id: string | null;
+
   quantity_type: 'unit' | 'ml';
   stock: number;
   created_at: string;
